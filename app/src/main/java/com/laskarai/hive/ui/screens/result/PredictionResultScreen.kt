@@ -203,14 +203,14 @@ fun PredictionResultScreen(
             if (pestDetails.recommendations.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "Rekomendasi Pengelolaan", // Judul utama untuk bagian rekomendasi
+                    text = "Rekomendasi Pengelolaan",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Loop melalui setiap item rekomendasi dan tampilkan menggunakan RecommendationCard
                 pestDetails.recommendations.forEach { recommendation ->
-                    RecommendationCard(recommendation = recommendation) // Menggunakan komponen dari CommonUi.kt
+                    RecommendationCard(recommendation = recommendation)
                     // Spacer(modifier = Modifier.height(8.dp))
                 }
             }

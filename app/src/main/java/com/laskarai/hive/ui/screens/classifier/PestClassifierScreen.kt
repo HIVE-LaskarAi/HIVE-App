@@ -74,10 +74,7 @@ fun PestClassifierScreen(
     // State untuk menyimpan URI sementara saat mengambil gambar dari kamera.
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
-    /**
-     * Fungsi untuk mereset semua state yang berhubungan dengan gambar dan prediksi
-     * biasanya dipanggil sebelum memilih gambar baru.
-     */
+    /// Fungsi untuk mereset semua state yang berhubungan dengan gambar dan prediksi
     fun resetImageStates() {
         sourceImageUri = null
         selectedBitmap = null
@@ -148,7 +145,6 @@ fun PestClassifierScreen(
                 selectedBitmap = null
                 statusMessage = "Gagal memuat gambar. Coba gambar lain."
             } finally {
-                // Pastikan isLoading disetel false jika tidak sedang dalam proses klasifikasi
                 if (statusMessage != "Mengklasifikasi...") {
                     isLoading = false
                 }
@@ -162,7 +158,7 @@ fun PestClassifierScreen(
      */
     fun performPredictionAndNavigate() {
         selectedBitmap?.let { bitmap ->
-            isLoading = true // Mulai loading untuk klasifikasi
+            isLoading = true
             statusMessage = "Mengklasifikasi..."
             try {
                 val (label, probabilities) = classifier.classify(bitmap)
@@ -177,8 +173,7 @@ fun PestClassifierScreen(
                             confidence = confidence
                         )
                     )
-                    // Reset state di layar ini setelah navigasi berhasil (opsional, tergantung behavior yang diinginkan)
-                    // resetImageStates() // Jika ingin layar ini bersih saat kembali
+                    // Reset state di layar ini setelah navigasi berhasil
                     statusMessage = null
                 } ?: run {
                     statusMessage = "URI gambar tidak tersedia untuk navigasi."
@@ -188,7 +183,7 @@ fun PestClassifierScreen(
                 Log.e("PestClassifierScreen", "Error selama klasifikasi", e)
                 statusMessage = "Gagal melakukan klasifikasi pada gambar."
             } finally {
-                isLoading = false // Selesai loading klasifikasi
+                isLoading = false
             }
         } ?: run {
             statusMessage = "Tidak ada gambar dipilih untuk prediksi."

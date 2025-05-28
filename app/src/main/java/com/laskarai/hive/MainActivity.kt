@@ -1,4 +1,4 @@
-package com.laskarai.hive // Paket root aplikasi Anda
+package com.laskarai.hive
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var classifier: RicePestClassifier
     // Nama file model TFLite Anda yang ada di folder assets
-    private val modelFileName = "converted_model.tflite" // Sesuaikan jika nama model berbeda
+    private val modelFileName = "converted_model.tflite"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

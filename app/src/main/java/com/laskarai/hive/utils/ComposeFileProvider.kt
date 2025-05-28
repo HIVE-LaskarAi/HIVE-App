@@ -28,7 +28,6 @@ object ComposeFileProvider {
         val imageFileName = "JPEG_${timeStamp}_"
 
         // Menentukan direktori penyimpanan di dalam cache aplikasi
-        // Menggunakan context.cacheDir lebih aman dan tidak memerlukan izin penyimpanan eksternal.
         val storageDir = File(context.cacheDir, "images")
         storageDir.mkdirs() // Membuat direktori jika belum ada
 
@@ -40,8 +39,6 @@ object ComposeFileProvider {
         )
 
         // Mendapatkan authority untuk FileProvider.
-        // Authority ini harus sama dengan yang dideklarasikan di AndroidManifest.xml.
-        // Menggunakan context.packageName memastikan authority unik untuk aplikasi
         val authority = "${context.packageName}.fileprovider"
 
         return FileProvider.getUriForFile(
