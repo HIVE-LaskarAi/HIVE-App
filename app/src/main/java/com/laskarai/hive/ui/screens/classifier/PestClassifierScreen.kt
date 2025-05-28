@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,9 @@ import androidx.navigation.NavHostController
 import com.laskarai.hive.classifier.RicePestClassifier
 import com.laskarai.hive.ui.navigation.AppRoutes
 import com.laskarai.hive.utils.ComposeFileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Layar utama aplikasi tempat pengguna dapat memilih gambar dari galeri atau
@@ -74,7 +78,9 @@ fun PestClassifierScreen(
     // State untuk menyimpan URI sementara saat mengambil gambar dari kamera.
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
-    /// Fungsi untuk mereset semua state yang berhubungan dengan gambar dan prediksi
+    val coroutineScope = rememberCoroutineScope()
+
+    // Fungsi untuk mereset semua state yang berhubungan dengan gambar dan prediksi
     fun resetImageStates() {
         sourceImageUri = null
         selectedBitmap = null
@@ -124,13 +130,12 @@ fun PestClassifierScreen(
         }
     }
 
-    // LaunchedEffect akan dijalankan ketika `sourceImageUri` berubah.
     // Digunakan untuk memuat Bitmap dari URI gambar yang dipilih.
     LaunchedEffect(sourceImageUri) {
         sourceImageUri?.let { uri ->
             isLoading = true
             statusMessage = "Memproses gambar..."
-            selectedBitmap = null // Hapus bitmap sebelumnya
+            selectedBitmap = null
             try {
                 val bitmapResult = if (Build.VERSION.SDK_INT < 28) {
                     MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
@@ -139,51 +144,54 @@ fun PestClassifierScreen(
                     ImageDecoder.decodeBitmap(source)
                 }
                 selectedBitmap = bitmapResult.copy(Bitmap.Config.ARGB_8888, true)
-                statusMessage = null // Hapus pesan status jika berhasil
+                statusMessage = null
             } catch (e: Exception) {
                 Log.e("PestClassifierScreen", "Error memuat bitmap dari URI: $uri", e)
                 selectedBitmap = null
                 statusMessage = "Gagal memuat gambar. Coba gambar lain."
             } finally {
-                if (statusMessage != "Mengklasifikasi...") {
-                    isLoading = false
-                }
+                isLoading = false
             }
         }
     }
 
+
     /**
-     * Fungsi untuk melakukan prediksi pada `selectedBitmap` dan kemudian
+     * Fungsi untuk melakukan prediksi pada `selectedBitmap` melalui API dan kemudian
      * menavigasi ke layar hasil jika prediksi berhasil.
      */
     fun performPredictionAndNavigate() {
-        selectedBitmap?.let { bitmap ->
+        selectedBitmap?.let { bitmapToClassify ->
             isLoading = true
-            statusMessage = "Mengklasifikasi..."
-            try {
-                val (label, probabilities) = classifier.classify(bitmap)
-                val confidence = probabilities.maxOrNull() ?: 0.0f
-                Log.d("PestClassifierScreen", "Prediksi: $label, Kepercayaan: $confidence")
+            statusMessage = "Mengklasifikasi via API..."
 
-                sourceImageUri?.let { uri ->
-                    navController.navigate(
-                        AppRoutes.resultScreenWithArgs(
-                            label = label,
-                            imageUri = uri.toString(),
-                            confidence = confidence
-                        )
-                    )
-                    // Reset state di layar ini setelah navigasi berhasil
-                    statusMessage = null
-                } ?: run {
-                    statusMessage = "URI gambar tidak tersedia untuk navigasi."
+            coroutineScope.launch(Dispatchers.Default) {
+                Log.d("PestClassifierScreen", "Classifier launched on ${Thread.currentThread().name}")
+                val result = classifier.classify(bitmapToClassify)
+
+                withContext(Dispatchers.Main) {
+                    Log.d("PestClassifierScreen", "Result processing on ${Thread.currentThread().name}")
+                    isLoading = false
+                    if (result != null) {
+                        val (label, confidence) = result
+                        Log.d("PestClassifierScreen", "API Prediksi: $label, Kepercayaan: $confidence")
+                        statusMessage = null
+
+                        sourceImageUri?.let { uri ->
+                            navController.navigate(
+                                AppRoutes.resultScreenWithArgs(
+                                    label = label,
+                                    imageUri = uri.toString(),
+                                    confidence = confidence
+                                )
+                            )
+                        } ?: run {
+                            statusMessage = "URI gambar tidak tersedia untuk navigasi."
+                        }
+                    } else {
+                        statusMessage = "Gagal mendapatkan prediksi dari API."
+                    }
                 }
-
-            } catch (e: Exception) {
-                Log.e("PestClassifierScreen", "Error selama klasifikasi", e)
-                statusMessage = "Gagal melakukan klasifikasi pada gambar."
-            } finally {
-                isLoading = false
             }
         } ?: run {
             statusMessage = "Tidak ada gambar dipilih untuk prediksi."
@@ -199,7 +207,7 @@ fun PestClassifierScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "Pengenal Hama Padi", // Judul aplikasi
+            text = "Pengenal Hama Padi",
             fontSize = 24.sp,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
@@ -218,30 +226,40 @@ fun PestClassifierScreen(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (isLoading && statusMessage == "Memproses gambar...") {
-                CircularProgressIndicator()
-                Text("Memproses gambar...", Modifier.padding(top = 60.dp))
-            } else if (selectedBitmap != null) {
-                Image(
-                    bitmap = selectedBitmap!!.asImageBitmap(),
-                    contentDescription = "Gambar Terpilih",
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else if (statusMessage != null && statusMessage != "Mengklasifikasi...") {
-                // Tampilkan pesan status lain jika tidak ada gambar dan tidak sedang klasifikasi
-                Text(
-                    text = statusMessage!!,
-                    color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith("Error")) MaterialTheme.colorScheme.error else LocalContentColor.current,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else {
-                Text(
-                    "Pilih gambar atau ambil foto untuk memulai",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            when {
+                isLoading && statusMessage?.startsWith("Memproses") == true -> {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Memproses gambar...")
+                    }
+                }
+
+                selectedBitmap != null -> {
+                    Image(
+                        bitmap = selectedBitmap!!.asImageBitmap(),
+                        contentDescription = "Gambar Terpilih",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                statusMessage != null && !statusMessage!!.startsWith("Mengklasifikasi") -> {
+                    Text(
+                        text = statusMessage!!,
+                        color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith("Error")) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                else -> {
+                    Text(
+                        "Pilih gambar atau ambil foto untuk memulai",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 
@@ -311,8 +329,12 @@ fun PestClassifierScreen(
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            if (isLoading && statusMessage == "Mengklasifikasi...") {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = Color.Black)
+            if (isLoading && statusMessage?.startsWith("Mengklasifikasi") == true) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = Color.White
+                )
             } else {
                 Text("Prediksi Hama", color = Color.White)
             }

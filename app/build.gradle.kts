@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -49,6 +50,25 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlinx") {
+            when (requested.name) {
+                "kotlinx-serialization-core",
+                "kotlinx-serialization-core-jvm",
+                "kotlinx-serialization-json",
+                "kotlinx-serialization-json-jvm" -> {
+                    // Paksa ke versi yang kompatibel dengan Kotlin 1.9.0
+                    // Anda bisa menggunakan "1.6.0" atau "1.6.3"
+                    // "1.6.3" adalah rilis patch terakhir di seri 1.6.x, jadi mungkin lebih baik
+                    useVersion("1.6.0")
+                    because("Memastikan kompatibilitas dengan Kotlin 1.9.0 dan menghindari konflik versi.")
+                }
+            }
+        }
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -73,5 +93,15 @@ dependencies {
 //    implementation("org.tensorflow:tensorflow-lite-support:0.4.3")
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("com.google.ai.edge.litert:litert:1.3.0")
+
+    // Ktor Client (Android)
+    implementation("io.ktor:ktor-client-android:2.3.11") // Ganti dengan versi terbaru jika ada
+    // Ktor Client Content Negotiation (untuk JSON)
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
+    // Ktor Serialization dengan Kotlinx JSON
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
+
+    // Kotlinx Serialization JSON (runtime)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // Ganti dengan versi terbaru
 
 }

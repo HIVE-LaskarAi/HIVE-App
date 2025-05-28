@@ -14,14 +14,12 @@ import com.laskarai.hive.ui.navigation.AppNavigator
 class MainActivity : ComponentActivity() {
 
     private lateinit var classifier: RicePestClassifier
-    // Nama file model TFLite Anda yang ada di folder assets
-    private val modelFileName = "converted_model.tflite"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Inisialisasi classifier saat Activity dibuat
-        classifier = RicePestClassifier(applicationContext, modelFileName)
+        classifier = RicePestClassifier(applicationContext)
 
         setContent {
             MaterialTheme {

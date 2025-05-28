@@ -21,7 +21,7 @@ import com.laskarai.hive.ui.screens.result.PredictionResultScreen
 fun AppNavigator(navController: NavHostController, classifier: RicePestClassifier) {
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.CLASSIFIER_SCREEN // Layar awal saat aplikasi dibuka
+        startDestination = AppRoutes.CLASSIFIER_SCREEN
     ) {
         // Definisi untuk layar utama (klasifikasi hama)
         composable(route = AppRoutes.CLASSIFIER_SCREEN) {
