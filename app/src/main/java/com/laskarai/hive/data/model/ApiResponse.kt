@@ -10,3 +10,9 @@ data class PredictionResponse(
     @SerialName("predicted_class")
     val predictedClass: String
 )
+
+@Serializable
+data class ErrorResponse(
+    @SerialName("error")
+    val message: String
+)

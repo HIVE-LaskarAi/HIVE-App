@@ -28,6 +28,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -79,6 +84,7 @@ fun PestClassifierScreen(
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Fungsi untuk mereset semua state yang berhubungan dengan gambar dan prediksi
     fun resetImageStates() {
@@ -166,15 +172,24 @@ fun PestClassifierScreen(
             statusMessage = "Mengklasifikasi via API..."
 
             coroutineScope.launch(Dispatchers.Default) {
-                Log.d("PestClassifierScreen", "Classifier launched on ${Thread.currentThread().name}")
+                Log.d(
+                    "PestClassifierScreen",
+                    "Classifier launched on ${Thread.currentThread().name}"
+                )
                 val result = classifier.classify(bitmapToClassify)
 
                 withContext(Dispatchers.Main) {
-                    Log.d("PestClassifierScreen", "Result processing on ${Thread.currentThread().name}")
+                    Log.d(
+                        "PestClassifierScreen",
+                        "Result processing on ${Thread.currentThread().name}"
+                    )
                     isLoading = false
                     if (result != null) {
                         val (label, confidence) = result
-                        Log.d("PestClassifierScreen", "API Prediksi: $label, Kepercayaan: $confidence")
+                        Log.d(
+                            "PestClassifierScreen",
+                            "API Prediksi: $label, Kepercayaan: $confidence"
+                        )
                         statusMessage = null
 
                         sourceImageUri?.let { uri ->
@@ -187,168 +202,214 @@ fun PestClassifierScreen(
                             )
                         } ?: run {
                             statusMessage = "URI gambar tidak tersedia untuk navigasi."
+                            snackbarHostState.showSnackbar(
+                                message = "Kesalahan internal: URI gambar tidak ditemukan.",
+                                duration = SnackbarDuration.Short
+                            )
                         }
                     } else {
-                        statusMessage = "Gagal mendapatkan prediksi dari API."
+                        statusMessage =
+                            "Gagal mendapatkan prediksi dari API." // Tetap set statusMessage
+                        val snackbarResult = snackbarHostState.showSnackbar(
+                            message = "Gagal memprediksi. Cek koneksi atau coba gambar lain.", // Pesan error generik untuk Snackbar
+                            actionLabel = "Coba Lagi", // Opsional: Tombol aksi
+                            duration = SnackbarDuration.Long
+                        )
+                        if (snackbarResult == SnackbarResult.ActionPerformed) {
+                            // Jika pengguna menekan "Coba Lagi", panggil fungsi ini lagi
+                            performPredictionAndNavigate()
+                        }
                     }
                 }
             }
         } ?: run {
             statusMessage = "Tidak ada gambar dipilih untuk prediksi."
             isLoading = false
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Silakan pilih gambar terlebih dahulu.",
+                    duration = SnackbarDuration.Short
+                )
+            }
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(
-            text = "Pengenal Hama Padi",
-            fontSize = 24.sp,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-        )
-
-        // Area untuk menampilkan gambar yang dipilih atau pesan status
-        Box(
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(vertical = 12.dp)
-                .background(
-                    if (selectedBitmap == null && statusMessage == null) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                    else Color.Transparent,
-                    shape = MaterialTheme.shapes.medium
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .padding(innerPadding),
+//                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            when {
-                isLoading && statusMessage?.startsWith("Memproses") == true -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Memproses gambar...")
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = "HIVE",
+                    fontSize = 24.sp,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(vertical = 12.dp)
+                        .background(
+                            if (selectedBitmap == null && statusMessage == null) MaterialTheme.colorScheme.surfaceVariant.copy(
+                                alpha = 0.3f
+                            )
+                            else Color.Transparent,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when {
+                        isLoading && statusMessage?.startsWith("Memproses") == true -> {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator()
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text("Memproses gambar...")
+                            }
+                        }
+
+                        selectedBitmap != null -> {
+                            Image(
+                                bitmap = selectedBitmap!!.asImageBitmap(),
+                                contentDescription = "Gambar Terpilih",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        statusMessage != null && !statusMessage!!.startsWith("Mengklasifikasi") -> {
+                            Text(
+                                text = statusMessage!!,
+                                color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith(
+                                        "Error"
+                                    )
+                                ) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+
+                        else -> {
+                            Text(
+                                "Pilih gambar atau ambil foto untuk memulai",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
 
-                selectedBitmap != null -> {
-                    Image(
-                        bitmap = selectedBitmap!!.asImageBitmap(),
-                        contentDescription = "Gambar Terpilih",
-                        modifier = Modifier.fillMaxSize()
-                    )
+                Text(
+                    text = "Identifikasi hama padi dengan mengunggah gambar atau mengambil foto.",
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                )
+
+                // Tombol untuk memilih gambar dari galeri
+                Button(
+                    onClick = {
+                        resetImageStates()
+                        galleryLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                .padding(vertical = 4.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Ambil dari Galeri", color = Color.Black)
                 }
 
-                statusMessage != null && !statusMessage!!.startsWith("Mengklasifikasi") -> {
+                // Tombol untuk mengambil foto dari kamera
+                Button(
+                    onClick = {
+                        resetImageStates()
+                        // Cek izin kamera
+                        when (ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CAMERA
+                        )) {
+                            PackageManager.PERMISSION_GRANTED -> {
+                                // Izin sudah ada, buat URI dan luncurkan kamera
+                                tempCameraUri = ComposeFileProvider.getImageUri(context)
+                                tempCameraUri?.let { uri -> cameraLauncher.launch(uri) }
+                            }
+
+                            else -> {
+                                // Izin belum ada, minta izin
+                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                .padding(vertical = 4.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Ambil Foto dari Kamera", color = Color.Black)
+                }
+
+                // Tombol untuk melakukan prediksi
+                Button(
+                    onClick = {
+                        performPredictionAndNavigate()
+                    },
+                    // Tombol aktif jika ada bitmap terpilih dan tidak sedang loading
+                    enabled = selectedBitmap != null && !isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                .padding(vertical = 4.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4CAF50),
+                        disabledContainerColor = Color(0xff51b855).copy(alpha = 0.5f),
+                        disabledContentColor = Color.Gray.copy(alpha = 0.7f),
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    if (isLoading && statusMessage?.startsWith("Mengklasifikasi") == true) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp,
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Prediksi Hama", color = Color.White)
+                    }
+                }
+
+                // Tampilkan pesan status klasifikasi atau error di bawah tombol jika relevan
+                if (statusMessage != null && (statusMessage == "Mengklasifikasi..." || (statusMessage!!.startsWith(
+                        "Gagal melakukan klasifikasi"
+                    ) || statusMessage!!.startsWith("URI gambar tidak tersedia")))
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = statusMessage!!,
-                        color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith("Error")) MaterialTheme.colorScheme.error else LocalContentColor.current,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
+                        color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith(
+                                "URI"
+                            )
+                        ) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                        textAlign = TextAlign.Center
                     )
                 }
-
-                else -> {
-                    Text(
-                        "Pilih gambar atau ambil foto untuk memulai",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-
-        Text(
-            text = "Identifikasi hama padi dengan mengunggah gambar atau mengambil foto.",
-            fontSize = 16.sp,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-        )
-
-        // Tombol untuk memilih gambar dari galeri
-        Button(
-            onClick = {
-                resetImageStates()
-                galleryLauncher.launch("image/*")
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-//                .padding(vertical = 4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Ambil dari Galeri", color = Color.Black)
-        }
-
-        // Tombol untuk mengambil foto dari kamera
-        Button(
-            onClick = {
-                resetImageStates()
-                // Cek izin kamera
-                when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-                    PackageManager.PERMISSION_GRANTED -> {
-                        // Izin sudah ada, buat URI dan luncurkan kamera
-                        tempCameraUri = ComposeFileProvider.getImageUri(context)
-                        tempCameraUri?.let { uri -> cameraLauncher.launch(uri) }
-                    }
-                    else -> {
-                        // Izin belum ada, minta izin
-                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-//                .padding(vertical = 4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Ambil Foto dari Kamera", color = Color.Black)
-        }
-
-        // Tombol untuk melakukan prediksi
-        Button(
-            onClick = {
-                performPredictionAndNavigate()
-            },
-            // Tombol aktif jika ada bitmap terpilih dan tidak sedang loading
-            enabled = selectedBitmap != null && !isLoading,
-            modifier = Modifier
-                .fillMaxWidth(),
-//                .padding(vertical = 4.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50),
-                disabledContainerColor = Color(0xff51b855).copy(alpha = 0.5f),
-                disabledContentColor = Color.Gray.copy(alpha = 0.7f),
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            if (isLoading && statusMessage?.startsWith("Mengklasifikasi") == true) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp,
-                    color = Color.White
-                )
-            } else {
-                Text("Prediksi Hama", color = Color.White)
-            }
-        }
-
-        // Tampilkan pesan status klasifikasi atau error di bawah tombol jika relevan
-        if (statusMessage != null && (statusMessage == "Mengklasifikasi..." || (statusMessage!!.startsWith("Gagal melakukan klasifikasi") || statusMessage!!.startsWith("URI gambar tidak tersedia")))) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = statusMessage!!,
-                color = if (statusMessage!!.startsWith("Gagal") || statusMessage!!.startsWith("URI")) MaterialTheme.colorScheme.error else LocalContentColor.current,
-                textAlign = TextAlign.Center
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }

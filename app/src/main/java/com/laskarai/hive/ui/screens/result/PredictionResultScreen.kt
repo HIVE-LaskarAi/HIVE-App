@@ -180,7 +180,7 @@ fun PredictionResultScreen(
 
             // Menampilkan tingkat kepercayaan prediksi.
             Text(
-                text = "Tingkat Kepercayaan: ${String.format(Locale.US, "%.1f", confidence * 100)}%",
+                text = "Tingkat Kepercayaan: ${String.format(Locale.US, "%.1f", confidence)}%",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
