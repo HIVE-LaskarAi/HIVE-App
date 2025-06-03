@@ -312,6 +312,199 @@ object PestDataRepository {
                 "Yellow Stem Borer - IRRI" to "https://www.riceknowledgebank.irri.org/training/fact-sheets/pest-management/insects/item/yellow-stem-borer",
                 "Info Penggerek Kuning - Direktorat Perlindungan Tanaman (Contoh)" to "http://ditjenpp.pertanian.go.id/index.php/direktorat-perlindungan-tanaman-pangan/opt-tanaman-padi"
             )
+        ),
+        "bacterial_leaf_blight" to PestDetails(
+            displayName = "Hawar Daun Bakteri",
+            scientificName = "Xanthomonas oryzae pv. oryzae",
+            description = "Penyakit ini menyebabkan daun menguning dan mengering, dimulai dari ujung dan menyebar ke arah pangkal. Daun tampak layu dengan pola seperti luka terbakar, dan menyebar cepat terutama di musim hujan atau saat irigasi buruk.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas tahan penyakit seperti yang memiliki gen resisten Xa. Kurangi pemupukan nitrogen berlebih dan perbaiki manajemen air."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan bakterisida berbahan aktif seperti tembaga hidroksida atau oksiklorida secara preventif ketika gejala mulai muncul."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Lakukan sanitasi lahan, hindari genangan, tanam serempak, dan lakukan rotasi tanaman.")
+            ),
+            importantNotes = "Hawar daun bakteri bisa menyebabkan kerugian hingga 60% jika tidak dikendalikan sejak awal. Monitoring harian sangat penting terutama di musim hujan.",
+            externalLinks = mapOf(
+                "IRRI - Bacterial Leaf Blight" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/bacterial-leaf-blight"
+            )
+        ),
+
+        "bacterial_leaf_streak" to PestDetails(
+            displayName = "Garis Daun Bakteri",
+            scientificName = "Xanthomonas oryzae pv. oryzicola",
+            description = "Menimbulkan garis-garis kekuningan pada daun yang berubah menjadi cokelat. Umumnya terjadi bersamaan dengan hawar daun bakteri, khususnya saat musim hujan dan kelembapan tinggi.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas tahan dan perbaiki drainase serta ventilasi tanaman."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan bakterisida seperti oksitetrasiklin atau bahan berbasis tembaga di awal kemunculan gejala."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Hindari luka pada tanaman dan jaga kebersihan alat pertanian.")
+            ),
+            importantNotes = "Penyakit ini sering tidak dikenali karena gejalanya samar. Perlu pemantauan berkala untuk deteksi dini.",
+            externalLinks = mapOf(
+                "IRRI - Bacterial Leaf Streak" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/bacterial-leaf-streak"
+            )
+        ),
+
+        "bacterial_panicle_blight" to PestDetails(
+            displayName = "Hawar Malai Bakteri",
+            scientificName = "Burkholderia glumae",
+            description = "Menyerang malai saat berbunga hingga pengisian bulir. Menyebabkan malai mengering prematur, gabah tidak berkembang, dan tampak terbakar. Sering muncul saat suhu tinggi dan kelembapan tinggi.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Tanam varietas tahan dan hindari kepadatan tanaman berlebih."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan bakterisida seperti streptomisin menjelang fase berbunga saat cuaca lembap."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Lakukan rotasi tanaman, pemupukan seimbang, dan pilih waktu tanam yang tepat.")
+            ),
+            importantNotes = "Sering tidak terlihat hingga akhir fase pertumbuhan. Pencegahan dan pengamatan rutin sangat krusial.",
+            externalLinks = mapOf(
+                "IRRI - Panicle Blight" to "https://www.knowledgebank.irri.org"
+            )
+        ),
+
+        "blast" to PestDetails(
+            displayName = "Penyakit Blast",
+            scientificName = "Magnaporthe oryzae",
+            description = "Blast menyebabkan bercak belah ketupat pada daun dan dapat menyerang batang serta leher malai. Menyebabkan kerusakan serius hingga pemutusan malai (‘patah leher’), terutama saat kelembapan tinggi.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas tahan seperti Ciherang, dan lakukan tanam serempak."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan fungisida triazol atau strobilurin seperti azoksistrobin dan difenokonazol pada fase anakan dan berbunga."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Kurangi nitrogen berlebih, perbaiki drainase, dan hindari penanaman saat musim hujan di daerah endemik.")
+            ),
+            importantNotes = "Blast dapat menurunkan hasil hingga 100% jika menyerang saat fase berbunga. Deteksi dini sangat penting.",
+            externalLinks = mapOf(
+                "IRRI - Rice Blast" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/blast"
+            )
+        ),
+
+        "brown_spot" to PestDetails(
+            displayName = "Bercak Cokelat",
+            scientificName = "Bipolaris oryzae",
+            description = "Menyerang daun, batang, dan malai. Bercak bulat berwarna cokelat tua, sering muncul di lahan yang kekurangan nutrisi atau saat tanaman mengalami stres.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas toleran dan tingkatkan kesuburan tanah (K, P, Zn)."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan fungisida seperti mankozeb atau propikonazol saat gejala awal muncul."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Lakukan rotasi tanaman dan sanitasi lahan secara berkala.")
+            ),
+            importantNotes = "Bercak cokelat dapat menurunkan kualitas dan bobot gabah jika menyerang saat pengisian bulir.",
+            externalLinks = mapOf(
+                "IRRI - Brown Spot" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/brown-spot"
+            )
+        ),
+        "dead_heart" to PestDetails(
+            displayName = "Pucuk Mati (Dead Heart)",
+            scientificName = "Serangan larva penggerek batang (misalnya Scirpophaga spp.)",
+            description = "Gejala ini menyebabkan tanaman muda kehilangan titik tumbuhnya karena batang utama rusak. Daun tengah mudah dicabut dan seringkali mengering atau mati.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Manfaatkan musuh alami seperti parasitoid Trichogramma spp. dan predator laba-laba sawah."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan insektisida sistemik berbahan aktif klorantraniliprol atau fipronil pada fase vegetatif awal bila serangan tinggi."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Lakukan tanam serempak, pengolahan tanah sempurna, dan sanitasi jerami atau tunggul setelah panen.")
+            ),
+            importantNotes = "Deteksi dini saat fase anakan sangat penting agar tindakan pengendalian efektif.",
+            externalLinks = mapOf(
+                "IRRI - Dead Heart" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/insects/item/stem-borer"
+            )
+        ),
+        "downy_mildew" to PestDetails(
+            displayName = "Embun Bulu (Downy Mildew)",
+            scientificName = "Sclerospora macrospora",
+            description = "Penyakit ini menyerang sistem daun dan menyebabkan pertumbuhan terhambat, daun menguning, dan muncul lapisan putih bertepung pada permukaan bawah daun.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas tahan dan lakukan pemupukan seimbang agar tanaman lebih toleran."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Semprot fungisida berbahan aktif metalaksil atau mankozeb pada fase awal pertumbuhan jika cuaca lembap."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Gunakan benih sehat dan hindari kelembapan tinggi melalui pengaturan irigasi.")
+            ),
+            importantNotes = "Downy mildew lebih umum pada jagung, namun dapat muncul juga pada varietas padi hibrida di kondisi ekstrem.",
+            externalLinks = mapOf(
+                "Sumber Tambahan" to "https://www.cabi.org/isc/datasheet/49182"
+            )
+        ),
+        "hispa" to PestDetails(
+            displayName = "Hama Hispa",
+            scientificName = "Dicladispa armigera",
+            description = "Hispa adalah kumbang kecil berduri yang merusak daun padi dengan cara menggerek lapisan atas daun, menyebabkan daun tampak putih dan rusak berat.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan musuh alami seperti kumbang predator dan parasitoid larva seperti Trichogramma."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Gunakan insektisida berbahan aktif imidakloprid atau klorantraniliprol saat populasi tinggi."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Hindari penanaman terlalu rapat dan lakukan pemangkasan tanaman inang di sekitarnya.")
+            ),
+            importantNotes = "Serangan hispa berat dapat menurunkan fotosintesis dan menyebabkan penurunan hasil panen secara drastis.",
+            externalLinks = mapOf(
+                "IRRI - Rice Hispa" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/insects/item/rice-hispa"
+            )
+        ),
+        "tungro" to PestDetails(
+            displayName = "Penyakit Tungro",
+            scientificName = "Rice Tungro Bacilliform Virus (RTBV) dan Rice Tungro Spherical Virus (RTSV)",
+            description = "Tungro adalah penyakit virus yang ditularkan oleh wereng hijau. Menyebabkan daun menguning, pertumbuhan terhambat, dan malai tidak terbentuk.",
+            imageUrlExample = null,
+            recommendations = listOf(
+                Recommendation(
+                    category = "Pengendalian Hayati",
+                    advice = "Gunakan varietas tahan seperti Inpari 9 atau Inpari 13 dan hindari penanaman padi secara terus menerus."),
+                Recommendation(
+                    category = "Pengendalian Kimiawi",
+                    advice = "Kendalikan populasi wereng hijau dengan insektisida selektif (seperti buprofezin) saat populasi nymph meningkat."),
+                Recommendation(
+                    category = "Pencegahan",
+                    advice = "Lakukan tanam serempak, sanitasi lahan, dan pemantauan rutin terhadap keberadaan wereng.")
+            ),
+            importantNotes = "Penyakit ini sangat merusak dan cepat menyebar di area endemik. Pencegahan jauh lebih efektif dibandingkan pengobatan.",
+            externalLinks = mapOf(
+                "IRRI - Tungro" to "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/tungro"
+            )
         )
     )
 
