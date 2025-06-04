@@ -22,7 +22,7 @@ Sebelum memulai, pastikan Anda memiliki:
 3.  Emulator Android (API Level 24 atau lebih tinggi) atau perangkat Android fisik.
 4.  Koneksi internet yang stabil (untuk sinkronisasi Gradle dan pemanggilan API).
 
-## 🚀 Pengaturan & Menjalankan Proyek
+## Pengaturan & Menjalankan Proyek
 
 1.  **Clone Repositori:**
     Buka terminal atau Git Bash, lalu jalankan perintah berikut:
@@ -39,7 +39,7 @@ Sebelum memulai, pastikan Anda memiliki:
     * Tunggu beberapa saat hingga Android Studio selesai melakukan sinkronisasi Gradle dan mengunduh semua dependensi yang dibutuhkan.
     * Jika ada pesan error terkait versi atau dependensi, periksa file `build.gradle.kts` (level proyek dan modul `app`) dan sesuaikan jika perlu.
 
-## 🛠️ Build & Jalankan Aplikasi
+## Build & Jalankan Aplikasi
 
 1.  Pastikan emulator Android Anda sudah berjalan atau perangkat Android fisik terhubung ke komputer dengan mode USB Debugging aktif.
 2.  Di Android Studio, pilih konfigurasi `app` pada dropdown konfigurasi build (biasanya sudah terpilih secara default).
