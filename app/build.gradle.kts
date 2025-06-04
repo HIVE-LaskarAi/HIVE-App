@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.litert.support.api)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,19 +90,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-//    implementation("org.tensorflow:tensorflow-lite:2.13.0")
-//    implementation("org.tensorflow:tensorflow-lite-support:0.4.3")
-    implementation("androidx.compose.ui:ui:1.5.4")
-    implementation("com.google.ai.edge.litert:litert:1.3.0")
+    implementation(libs.ui)
+    implementation(libs.litert)
 
     // Ktor Client (Android)
-    implementation("io.ktor:ktor-client-android:2.3.11") // Ganti dengan versi terbaru jika ada
+    implementation(libs.ktor.client.android)
     // Ktor Client Content Negotiation (untuk JSON)
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
+    implementation(libs.ktor.client.content.negotiation)
     // Ktor Serialization dengan Kotlinx JSON
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Kotlinx Serialization JSON (runtime)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // Ganti dengan versi terbaru
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.core.splashscreen)
 
 }
